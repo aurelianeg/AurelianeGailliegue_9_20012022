@@ -23,8 +23,7 @@ const bills = [{
   "amount": 400,
   "commentAdmin": "ok",
   "email": "a@a",
-  "pct": 20,
-  "email": "john.snow@billed.com"
+  "pct": 20
 }]
 
 describe('Given I am connected', () => {
