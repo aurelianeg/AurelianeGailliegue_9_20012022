@@ -90,6 +90,36 @@ describe('Given I am connected as an Admin', () => {
     })
   })
 
+  describe('When I am on Dashboard page and I click 2 times on the same arrow', () => {
+    test('Then tickets list should be folded, and cards should not appear', () => {
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Admin'
+      }))
+
+      const dashboard = new Dashboard({
+        document, onNavigate, store: null, bills, localStorage: window.localStorage
+      })
+      document.body.innerHTML = DashboardUI({ data: bills })
+
+      const handleShowTickets1 = jest.fn((e) => dashboard.handleShowTickets(e, bills, 1))
+
+      const icon1 = screen.getByTestId('arrow-icon1')
+
+      icon1.addEventListener('click', handleShowTickets1)
+      userEvent.click(icon1)
+      userEvent.click(icon1)
+      expect(handleShowTickets1).toHaveBeenCalledTimes(2)
+      const statusBillsContainer1 = document.querySelector("#status-bills-container1")
+      expect(statusBillsContainer1.innerHTML).toBe("")
+    })
+  })
+
   describe('When I am on Dashboard page and I click on edit icon of a card', () => {
     test('Then, right form should be filled', () => {
 
@@ -119,7 +149,7 @@ describe('Given I am connected as an Admin', () => {
   })
 
   describe('When I am on Dashboard page and I click 2 times on edit icon of a card', () => {
-    test('Then, big bill Icon should Appear',  () => {
+    test('Then, big bill Icon should appear',  () => {
 
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES({ pathname })
