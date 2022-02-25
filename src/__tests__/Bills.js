@@ -13,7 +13,6 @@ import userEvent from "@testing-library/user-event"
 
 import "@testing-library/jest-dom"
 import router from "../app/Router.js";
-import NewBillUI from "../views/NewBillUI.js"
 
 jest.mock("../app/store", () => mockStore)
 
@@ -116,7 +115,8 @@ describe("Given I am connected as an employee", () => {
       newBillButton.addEventListener('click', handleClickNewBillButton)
       userEvent.click(newBillButton)
       expect(handleClickNewBillButton).toHaveBeenCalled()
-      expect(NewBillUI()).toBeTruthy()
+      const newBillTitle = screen.getByText('Envoyer une note de frais')
+      expect(newBillTitle).toBeTruthy()
     })
   })
 })
