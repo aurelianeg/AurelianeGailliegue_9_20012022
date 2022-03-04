@@ -1,7 +1,24 @@
 import { ROUTES_PATH } from '../constants/routes.js'
 import Logout from "./Logout.js"
 
+function clearInputFile(f){
+  if(f.value){
+    try{
+        f.value = ''; //for IE11, latest Chrome/Firefox/Opera...
+    }
+    catch(err){ }
+    if(f.value){ //for IE5 ~ IE10
+      var form = document.createElement('form'),
+          parentNode = f.parentNode, ref = f.nextSibling;
+      form.appendChild(f);
+      form.reset();
+      parentNode.insertBefore(f,ref);
+    }
+  }
+}
+
 export default class NewBill {
+  
   constructor({ document, onNavigate, store, localStorage }) {
     this.document = document
     this.onNavigate = onNavigate
@@ -15,14 +32,20 @@ export default class NewBill {
     this.billId = null
     new Logout({ document, localStorage, onNavigate })
   }
+
   handleChangeFile = e => {
     e.preventDefault()
-    let files = this.document.querySelector(`input[data-testid="file"]`).files
-    const file = files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
-    const fileExt = fileName.split(/\./g)[fileName.split(/\./g).length-1];
+    let file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+    //let file = e.target.files[0]
+    let filePath = e.target.value.split(/\\/g)
+    let fileName = filePath[filePath.length-1] 
+    let fileExt = fileName.split(/\./g)[fileName.split(/\./g).length-1]
+    console.log('file =', file)
+    console.log('filePath =', filePath)
+    console.log('fileName =', fileName)
+    console.log('fileExt =', fileExt)
     if (fileExt == "jpg" || fileExt == "jpeg" || fileExt == "png") {
+
       const formData = new FormData()
       const email = JSON.parse(localStorage.getItem("user")).email
       formData.append('file', file)
@@ -45,14 +68,14 @@ export default class NewBill {
     }
     else {
       alert("Vous devez choisir un fichier JPG, JPEG ou PNG comme justificatif.")
-      let newFiles = new DataTransfer()
-      files = newFiles.files       // Empty FileList
-      this.document.querySelector(`input[data-testid="file"]`).value = "" // Wrong file name not written on the page
+      /* let newFiles = new DataTransfer()
+      e.target.files = newFiles.files       // Empty FileList */
+      e.target.value = null     // Wrong file name not written on the page
     }
   }
+  
   handleSubmit = e => {
     e.preventDefault()
-    console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
       email,
