@@ -160,7 +160,6 @@ describe("Given I am a user connected as employee", () => {
         })
         window.onNavigate(ROUTES_PATH.Bills)
         await new Promise(process.nextTick);
-        document.body.innerHTML = BillsUI({ error: "Erreur 404" })
         const message = await screen.getByText(/Erreur 404/)
         expect(message).toBeTruthy()
       })
@@ -175,7 +174,6 @@ describe("Given I am a user connected as employee", () => {
         })
         window.onNavigate(ROUTES_PATH.Bills)
         await new Promise(process.nextTick);
-        document.body.innerHTML = BillsUI({ error: "Erreur 500" })
         const message = await screen.getByText(/Erreur 500/)
         expect(message).toBeTruthy()
       })
