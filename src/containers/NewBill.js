@@ -1,21 +1,6 @@
 import { ROUTES_PATH } from '../constants/routes.js'
+import ErrorPage from '../views/ErrorPage.js'
 import Logout from "./Logout.js"
-
-function clearInputFile(f){
-  if(f.value){
-    try{
-        f.value = ''; //for IE11, latest Chrome/Firefox/Opera...
-    }
-    catch(err){ }
-    if(f.value){ //for IE5 ~ IE10
-      var form = document.createElement('form'),
-          parentNode = f.parentNode, ref = f.nextSibling;
-      form.appendChild(f);
-      form.reset();
-      parentNode.insertBefore(f,ref);
-    }
-  }
-}
 
 export default class NewBill {
   
@@ -35,17 +20,12 @@ export default class NewBill {
 
   handleChangeFile = e => {
     e.preventDefault()
-    let file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    //let file = e.target.files[0]
-    let filePath = e.target.value.split(/\\/g)
-    let fileName = filePath[filePath.length-1] 
-    let fileExt = fileName.split(/\./g)[fileName.split(/\./g).length-1]
-    console.log('file =', file)
-    console.log('filePath =', filePath)
-    console.log('fileName =', fileName)
-    console.log('fileExt =', fileExt)
-    if (fileExt == "jpg" || fileExt == "jpeg" || fileExt == "png") {
-
+    let files = this.document.querySelector(`input[data-testid="file"]`)
+    //let files = e.target
+    let file = files.files[0]
+    let fileName = file.name
+    
+    if (file.type.match("image/jpeg") || file.type.match("image/jpg") || file.type.match("image/png") || file.type.match("image/gif")) {
       const formData = new FormData()
       const email = JSON.parse(localStorage.getItem("user")).email
       formData.append('file', file)
@@ -60,11 +40,17 @@ export default class NewBill {
           }
         })
         .then(({fileUrl, key}) => {
-          console.log(fileUrl)
+          console.log("fileUrl", fileUrl)
           this.billId = key
           this.fileUrl = fileUrl
           this.fileName = fileName
-        }).catch(error => console.error(error))
+        })
+        .catch(error => {
+          console.log("create error")
+          // Show error page (because error is not a parameter in NewBillUI)
+          const rootDiv = document.getElementById('root')
+          rootDiv.innerHTML = ErrorPage(error)
+        })
     }
     else {
       alert("Vous devez choisir un fichier JPG, JPEG ou PNG comme justificatif.")
@@ -90,11 +76,27 @@ export default class NewBill {
       fileName: this.fileName,
       status: 'pending'
     }
-    this.updateBill(bill)
-    this.onNavigate(ROUTES_PATH['Bills'])
+
+    // Check if required fields are filled
+    var requiredFieldsFilled = true;
+    if (!e.target.querySelector(`input[data-testid="datepicker"]`).value) {
+      requiredFieldsFilled = false;
+    }
+    if (!e.target.querySelector(`input[data-testid="amount"]`).value) {
+      requiredFieldsFilled = false;
+    }
+    if (!e.target.querySelector(`input[data-testid="pct"]`).value) {
+      requiredFieldsFilled = false;
+    }
+
+    if (requiredFieldsFilled) {
+      this.updateBill(bill)
+      //this.onNavigate(ROUTES_PATH['Bills'])   // 2 incorrect tests if commented
+    }
   }
 
   // not need to cover this function by tests
+  /* istanbul ignore next */
   updateBill = (bill) => {
     if (this.store) {
       this.store
@@ -103,7 +105,12 @@ export default class NewBill {
       .then(() => {
         this.onNavigate(ROUTES_PATH['Bills'])
       })
-      .catch(error => console.error(error))
+      .catch(error => {
+        console.log("update error")
+        // Show error page (because error is not a parameter in NewBillUI)
+        const rootDiv = document.getElementById('root')
+        rootDiv.innerHTML = ErrorPage(error)
+      })
     }
   }
 }
