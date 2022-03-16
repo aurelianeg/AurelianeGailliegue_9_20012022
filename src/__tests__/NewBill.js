@@ -16,7 +16,7 @@ window.alert = jest.fn();
 
 describe("Given I am connected as an employee on NewBill page", () => {
   describe("When I am on NewBill page", () => {
-    test("Then it should render the page", async () => {
+    test("Then it should render the page", () => {
       
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
@@ -36,7 +36,8 @@ describe("Given I am connected as an employee on NewBill page", () => {
   })
 
   describe("When I do not fill required fields and I click on 'Send'", () => {
-    test("Then I am still on NewBill page", async () => {
+    test("Then I am still on NewBill page", () => {
+
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee'
@@ -70,15 +71,6 @@ describe("Given I am connected as an employee on NewBill page", () => {
   describe("When the required inputs are filled and I click on 'Send'", () => {
     test("Then the form is submitted and I go on Bills page", async () => {
 
-      jest.spyOn(mockStore, "bills")
-      mockStore.bills.mockImplementationOnce(() => {
-        return {
-          update : () => {
-            return Promise.resolve({})
-          }
-        }
-      })
-
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee'
@@ -94,7 +86,8 @@ describe("Given I am connected as an employee on NewBill page", () => {
       const newBillInputData = {
         date: "2021-12-31",
         amount: "123",
-        pct: "25"
+        pct: "25",
+        file: new File(['img'], 'test_newbill.png', { type: 'image/png' })
       }
 
       const dateInputNewBill = screen.getByTestId('datepicker')
@@ -108,6 +101,15 @@ describe("Given I am connected as an employee on NewBill page", () => {
       const pctInputNewBill = screen.getByTestId('pct')
       fireEvent.change(pctInputNewBill, { target: { value: newBillInputData.pct } })
       expect(pctInputNewBill.value).toBe(newBillInputData.pct)
+
+      const fileChangeNewBill = screen.getByTestId('file')
+      const handleChangeFileButton = jest.fn((e) => newCreatedBill.handleChangeFile(e))
+      fileChangeNewBill.addEventListener('change', handleChangeFileButton)
+      userEvent.upload(fileChangeNewBill, newBillInputData.file)
+      expect(handleChangeFileButton).toHaveBeenCalled()
+      expect(fileChangeNewBill.files[0]).toBe(newBillInputData.file)
+      expect(fileChangeNewBill.files.item(0)).toBe(newBillInputData.file)
+      expect(fileChangeNewBill.files).toHaveLength(1)
 
       const form = screen.getByTestId("form-new-bill")
       const handleSubmitNewBill = jest.fn((e) => newCreatedBill.handleSubmit(e))
@@ -125,18 +127,6 @@ describe("Given I am connected as an employee on NewBill page", () => {
 
   describe("When all inputs are filled (required or not) and I click on 'Send'", () => {
     test("Then all inputs are correct, the form is submitted and I go on Bills page", async () => {
-      
-      jest.spyOn(mockStore, "bills")
-      mockStore.bills.mockImplementationOnce(() => {
-        return {
-          create : () => {
-            return Promise.resolve({})
-          },
-          update : () => {
-            return Promise.resolve({})
-          }
-        }
-      })
 
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
