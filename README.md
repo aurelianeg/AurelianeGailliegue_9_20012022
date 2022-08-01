@@ -1,107 +1,128 @@
-# Site web "Billed"
+# Billed
 
-***
-## Mission
+Billed[^1] is an application to manage bills for employees and administrators.
 
-### Fonctionnalité “note de frais”
+**Goal of this project**: Debugging, and test writing (unit, integration and E2E tests).
 
-La fonctionnalité "note de frais" est très attendue sur le marché et le top management a mis la priorité dessus. L’objectif est de la lancer officiellement auprès des clients d’ici 2 semaines.
-Sa description est disponible ici : https://s3.eu-west-1.amazonaws.com/course.oc-static.com/projects/DA+JSR_P9/Billed+-+Description+des+fonctionnalite%CC%81s.pdf
 
-Pour fiabiliser et améliorer le parcours employé, la description pratique des besoins pour la mise en place de la fonctionnalité est disponible sur ce document : https://course.oc-static.com/projects/DA+JSR_P9/Billed+-+Description+pratique+des+besoins.pdf
-Le rapport avec les bugs identifiés (Kanban Notion) ainsi qu’un exemple de plan de tests End-to-End y sont disponibles.
+## Load specifications
 
-Il y a deux parcours utilisateurs : un administrateur RH et un employé.
+### Features
 
-- Le back-end des deux parcours est prêt en version alpha. 
-- Côté front-end :
-↳ Parcours administrateur : il a été testé, il faut désormais le débugger.
-↳ Parcours employé : il faut entièrement le tester et le débugger.
+A bill feature has been developed to allow bill treatment from employees to admin.
 
-Le debugging devra se faire avec Chrome Debugger.
+- Login as an employee:
+    * After being logged in on Login page, the employee arrives on the list of bills which were already sent, with their status. The employee can see the proof or download the PDF for each bill.
+    * If "New bill" is clicked, a new bill can be created with new informations. If "Submit" button is clicked, the bill is sent to HR admins.
+    * The employee stays connected if he/she clicks on previous page.
+    * The employee is sent to Login page if the "Log out" button is clicked.
+- Login as an admin:
+    * After being logged in on Login page, the admin arrives on the dashboard. On the left, all employee bills are grouped by their status (pending; accepted, refused). The admin can see the proof or download the PDF for each bill.
+    * If a pending bill is clicked, the admin can accept or refuse the bill.
+    * If a treated bill is clicked, the admin can see bill informations.
+    * The admin stays connected if he/she clicks on previous page.
+    * The admin is sent to Login page if the "Log out" button is clicked.
 
-### 1. Installation du back-end
 
-Le back-end est disponible sur ce repo : https://github.com/OpenClassrooms-Student-Center/Billed-app-FR-back
-Le service API back-end doit être lancé en local (voir README sur le repo).
+The report with previous bug reports and hunts, and with tests to do is available [here](https://www.notion.so/a7a612fc166747e78d95aa38106a55ec?v=2a8d3553379c4366b6f66490ab8f0b90).
 
-### 2. Lancement du front-end
+On this front-end repository:
+- Admin route had now been debugged.
+- Employee route has now been tested and debugged.
 
-Cloner le repo :
-```
-$ git clone https://github.com/aurelianeg/AurelianeGailliegue_9_20012022.git
-```
 
-Installer les packages npm (décrits dans `package.json`) :
-```
-$ npm install
-```
+## Installation and launch
 
-Installer live-server pour lancer un serveur local :
-```
-$ npm install -g live-server
-```
+### Back-end
 
-Lancer l'application :
-```
-$ live-server
+The back-end repository is available [here](https://github.com/OpenClassrooms-Student-Center/Billed-app-FR-back).
+
+1. Clone the repository
+
+```sh
+git clone https://github.com/OpenClassrooms-Student-Center/Billed-app-FR-Back.git
 ```
 
-Puis aller à l'adresse : `http://127.0.0.1:8080/`
+2. Install project dependencies
 
-***
+```sh
+npm install
+```
+
+3. Launch API
+
+```sh
+npm run run:dev
+```
+
+The API is locally available on port 5678, you can go to <http://localhost:5678>.
+
+### Front-end
+
+1. Clone the repository
+
+```sh
+git clone https://github.com/aurelianeg/billed.git
+```
+
+2. Install dependencies
+
+```sh
+npm install
+```
+
+3. Install live-server
+
+```sh
+npm install -g live-server
+```
+
+4. Launch the project with Live Server
+
+```sh
+live-server
+```
+
+Then go to <http://127.0.0.1:8080/>. The page will reload when changes are made in the code.
+
+### Accounts and users
+
+Here are the default user accounts that can be used to try connections:
+
+#### Admin
+
+```
+User : admin@test.tld 
+Password : admin
+```
+
+#### Employee
+
+```
+User : employee@test.tld
+Password : employee
+```
+
+
 ## Tests
 
-### Lancement des tests en local avec Jest
+### Local tests launch with Jest
 
-```
+```sh
 $ npm run test
 ```
 
-### Lancer un seul test
+### Unique test launch
 
-Installer jest-cli :
-```
-$ npm i -g jest-cli
-$ jest src/__tests__/your_test_file.js
-```
+Install `jest-cli`
 
-### Voir la couverture de test
-
-`http://127.0.0.1:8080/coverage/lcov-report/`
-
-***
-## Comptes et utilisateurs
-
-La connexin peut être faite en utilisant les comptes:
-
-### Administrateur
-
-```
-Utilisateur : admin@test.tld 
-Mot de passe : admin
+```sh
+npm i -g jest-cli
+jest src/__tests__/your_test_file.js
 ```
 
-### Employé
+### Test coverage
 
-```
-Utilisateur : employee@test.tld
-Mot de passe : employee
-```
+You can go to `http://127.0.0.1:8080/coverage/lcov-report/` to see test coverage.
 
-***
-## Livrables
-
-Pour ce projet, les livrables à fournir sont :
-- Un lien vers la codebase à jour sur un repo GitHub public
-- Un screenshot avec le rapport de tests Jest sur l’ensemble des fichiers d’UI (src/views) et des fichiers d’UX (src/containers).
-- Un screenshot du rapport de couverture Jest.
-- Un document au format PDF du plan End-To-End pour le parcours employé.
-
-***
-## Compétences évaluées
-
-- Ecrire des tests unitaires avec JavaScript
-- Débugger une application web avec le Chrome Debugger
-- Rédiger un plan de test end-to-end manuel
-- Ecrire des tests d'intégration avec JavaScript
+[^1]: This is the 6th project of the "Front-end developer (JS - React)" training by OpenClassrooms.
